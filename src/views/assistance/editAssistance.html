@@ -1,0 +1,43 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    Edit Assistance
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col">
+            <div class="mb-3">
+                <label>ID</label>
+                <input class="form-control"  value="{{assistance[0]}}" disabled>
+            </div>
+            <div class="mb-3">
+                <label>Name:</label>
+                <input class="form-control"  value="{{assistance[1]}} {{assistance[2]}}" disabled>
+            </div>
+            <div class="mb-3">
+                <label>Semester:</label>
+                <input class="form-control" value="{{assistance[3]}}" disabled>
+            </div>
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="assistance">Assistance</label>
+                    <select  class="form-control" id="assistance" name="assistance">
+                        {% if assistance[4] == 1 %}
+                            <option value="1" selected='True' disabled>Yes</option>
+                            <option value="0">No</option>
+                        {% else %}
+                            <option value="1" >Yes</option>
+                            <option value="0" selected='True' disabled>No</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Save</button>
+            </form>
+        </div>
+        <div class="col-3"></div>
+    </div>    
+</div>
+{% endblock %}

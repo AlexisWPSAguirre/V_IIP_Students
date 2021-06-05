@@ -1,0 +1,35 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    Edit Activities AND  Partials
+{% endblock %}
+
+{% block content %}
+
+    <form method="POST" class="container mt-5">
+        <div class="row">
+            <div class="col-1">
+
+            </div>
+            <div class="col"><div class="mb-3">
+                <label for="name">Name</label>
+                <input class="form-control" value="{{activity[4]}}" type="text" name="name" id="name">
+            </div>
+            <div class="mb-3">
+                <label for="date">Date</label>
+                <input class="form-control" value="{{activity[2]}}" type="date" name="date" id="date">
+            </div>
+            <div class="mb-3">
+                <label for="cut">Cut</label>
+                <input class="form-control" value="{{activity[3]}}" type="text" name="cut" id="cut">
+            </div>
+            <div class="mb-3">
+                <label  for="porcentage">Porcentage In Cut</label>
+                <input class="form-control" value="{{activity[5]}}" type="text" name="porcentage" id="porcentage">
+            </div>
+            <button class="btn btn-success" type="submit">Save</button>
+        </form></div>
+            <div class="col-3"></div>
+        </div>
+        
+{% endblock %}

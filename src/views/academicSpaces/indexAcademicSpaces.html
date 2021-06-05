@@ -1,0 +1,62 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    Academic Spaces
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-3 row">
+    <div class="col-4"></div>
+    <div class="mb-3 col">
+        <form  method="POST">
+            <div class="col"></div>
+            <select name="period" class="form-control">
+                <option selected='true' disabled>Period</option>
+                {% if periods %}
+                    {% for period in periods %}
+                        {% if pd == period[0] %}
+                            <option selected='True' disabled value="{{period[0]}}">{{period[1]}}-{{period[2]}}</option>
+                        {% else %}
+                            <option value="{{period[0]}}">{{period[1]}}-{{period[2]}}</option>
+                        {% endif %}
+                    {% endfor %}
+                {% endif%}
+            </select>
+        </div>
+    <div class="col-3"> <button type="submit" class="btn btn-dark" >Choose</button></div>
+    </form>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col">
+            <a class="btn btn-dark" href="{{url_for('createAcademicSpace')}}">New Academic Space</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Semester</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for space in academicSpaces %}
+                    <tr>
+                        <td>{{loop.index}}</td>
+                        <td><a class="btn" href="{{url_for('indexActivities', space = space[0])}}">{{space[2]}}</a></td>
+                        <td>{{space[3]}}</td>
+                        <td>
+                            <a class="btn btn-success" href="{{url_for('editAcademicSpace', idSpace = space[0])}}">Edit</a>
+                            <a class="btn btn-danger" href="{{url_for('removeAcademicSpace', idSpace = space[0])}}">Remove</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

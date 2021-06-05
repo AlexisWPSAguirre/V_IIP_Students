@@ -1,0 +1,84 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    Sessions
+{% endblock %}
+
+{% block content %}
+<div class="row mt-1">
+    <div class="col-2">
+        <div class="collapse" id="navbarToggleExternalContent">
+            <div class="bg-dark p-4">
+                <a class="btn btn-dark" href="{{url_for('indexActivities')}}"> Activity & Partials </a>
+            </div>
+            <div class="bg-dark p-4">
+                <a class="btn btn-dark" href="{{url_for('indexSession')}}"> Sessions </a>
+            </div>
+          </div>
+          <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+            </div>
+          </nav>
+    </div>
+    <div class="col-10">
+        <div class="container mt-3 row">
+            <div class="col-1"></div>
+            <div class="mb-3 col">
+                <form  method="POST">
+                    <div class="col"></div>
+                    <select name="space" class="form-control">
+                        <option selected='true' disabled>Academic Space</option>
+                        {% if academicSpaces %}
+                            {% for space in academicSpaces %}
+                                {% if pd == space[0] %}
+                                    <option selected='True' disabled value="{{space[0]}}">{{space[2]}} - {{space[3]}}</option>
+                                {% else %}
+                                    <option value="{{space[0]}}">{{space[2]}} - {{space[3]}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif%}
+                    </select>
+                </div>
+            <div class="col-5"> <button type="submit" class="btn btn-dark" >Choose</button></div>
+
+            </form>
+
+            <div class="col-2"></div>
+        <div class="col">
+            <a class="btn btn-dark" href="{{url_for('createSession')}}">New Session</a>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Cut</th>
+                            <th>Time Start</th>
+                            <th>Time End</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sesion in sessions %}
+                            <tr>
+                                <td>{{loop.index}}</td>
+                                <td><a class="btn" href="{{url_for('indexAssistance', idSession = sesion[0])}}">{{sesion[2]}}</a></td>        
+                                <td>{{sesion[3]}}</td>        
+                                <td>{{sesion[4]}}</td>        
+                                <td>{{sesion[5]}}</td>        
+                                <td>
+                                    <a class="btn btn-success" href="{{url_for('editSession', idSession = sesion[0])}}">Edit</a>
+                                    <a class="btn btn-danger" href="{{url_for('removeSession', idSession = sesion[0])}}">Remove</a>
+                                </td>
+                            </tr>
+                        {% endfor%}
+                    </tbody>
+                </table>
+        </div>
+        <div class="col-2"></div>
+        </div>
+    </div>
+    
+{% endblock %}

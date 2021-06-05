@@ -1,0 +1,28 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    Edit Activities AND  Partials
+{% endblock %}
+
+{% block content %}
+{{activity}}
+    <form method="POST">
+        <div>
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name">
+        </div>
+        <div>
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date">
+        </div>
+        <div>
+            <label for="cut">Cut</label>
+            <input type="text" name="cut" id="cut">
+        </div>
+        <div>
+            <label for="porcentage">Porcentage In Cut</label>
+            <input type="text" name="porcentage" id="porcentage">
+        </div>
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    Create Session
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="contanier mt-5">
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="date" >Date</label>
+                        <input value="{{session[2]}}" class="form-control" id="date" name="date" type="date">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cut">Cut</label>
+                        <input value="{{session[3]}}" type="number" class="form-control" id="cut" name="cut">
+                    </div>
+                    <div class="mb-3">
+                        <label for="start">Time Start</label>
+                        <input value="{{session[4]}}" type="text" class="form-control" id="start" name="start">
+                    </div>
+                    <div class="mb-3">
+                        <label for="end">Time End</label>
+                        <input value="{{session[5]}}" type="text" class="form-control" id="end" name="end">
+                    </div>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </form>
+            </div>
+            <div class="col-3"></div>
+        </div>
+        
+{% endblock %}

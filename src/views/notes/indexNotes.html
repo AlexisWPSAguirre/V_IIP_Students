@@ -1,0 +1,48 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    Notes
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col">
+            <a class="btn btn-dark" href="{{url_for('selectStudent')}}">New Note</a>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Identification</th>
+                        <th>Name</th>
+                        <th>Surname</th>
+                        <th>Semester</th>
+                        <th>Note</th>
+                        <th>Comentary</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{loop.index}}</td>
+                        <td>{{student[1]}}</td>
+                        <td>{{student[2]}}</td>
+                        <td>{{student[3]}}</td>
+                        <td>{{student[7]}}</td>
+                        <td>{{student[8]}}</td>
+                        <td>{{student[9]}}</td>
+                        <td><a class="btn btn-success" href="{{url_for('editNote', idNote = student[10])}}">Edit</a>
+                            <a class="btn btn-danger" href="{{url_for('removeNote', idNote = student[10])}}">Remove</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-1"></div>
+    </div>
+</div>
+
+{% endblock %}

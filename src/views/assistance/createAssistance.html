@@ -1,0 +1,40 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    Create Assistance
+{% endblock %}
+
+{% block content %}
+{% if selected %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col">
+        <a class="btn btn-dark" href="{{url_for('selectStudentAssistance')}}">Seleccionar Estudiante</a>
+            <div class="mb-3">
+                <label>ID</label>
+                <input class="form-control"  value="{{selected[1]}}" disabled>
+            </div>
+            <div class="mb-3">
+                <label>Name:</label>
+                <input class="form-control"  value="{{selected[2]}} {{selected[3]}}" disabled>
+            </div>
+            <div class="mb-3">
+                <label>Semester:</label>
+                <input class="form-control" value="{{selected[6]}}" disabled>
+            </div>
+        <form  method="POST">
+            <div class="mb-3">
+                <label for="assistance">Assistance</label>
+                <select class="form-control" name="assistance" id="assistance">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+                </div>  
+                <div class="col-3"></div>
+            </div>
+    {% endif %}
+{% endblock %}

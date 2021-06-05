@@ -1,0 +1,43 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    Note Student
+{% endblock %}
+
+{% block content %}
+
+{% if selected %}
+    <div class="container">
+            <div class="row">
+                <div class="col-2"></div>
+                <div class="col">
+                    <a class="btn btn-dark mt-3 mb-4" href="{{url_for('selectStudent')}}">Seleccionar Estudiante</a>
+                <h2>Nota Estudiante:</h2>
+                <div class="mb-3">
+                    <label>ID</label>
+                    <input class="form-control"  value="{{selected[1]}}" disabled>
+                </div>
+                <div class="mb-3">
+                    <label>Name:</label>
+                    <input class="form-control"  value="{{selected[2]}} {{selected[3]}}" disabled>
+                </div>
+                <div class="mb-3">
+                    <label>Semester:</label>
+                    <input class="form-control" value="{{selected[6]}}" disabled>
+                </div>
+            <form  method="POST">
+                <div class="mb-3">
+                    <label for="note">Note</label>
+                    <input class="form-control" id="note" name="note">
+                </div>
+                <div class="mb-3">
+                    <label for="commentary">Commentary</label>
+                    <input  class="form-control" id="commentary" name="commentary">
+                </div>
+                <button type="submit" class="btn btn-success">Save</button>
+            </form>
+                </div>
+                <div class="col-3"></div>
+            </div>
+    {% endif %}
+{% endblock %}

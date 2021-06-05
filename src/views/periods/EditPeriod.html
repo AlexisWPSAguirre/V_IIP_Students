@@ -1,0 +1,22 @@
+{% extends 'layouts/indexBase.html' %}
+
+{% block title %}
+    Edit Period
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        
+        <form method="POST">
+            <div class="mb-3">
+                <label for="date">Date</label>
+                <input value="{{period[1]}}" class="form-control" type="number" placeholder="YYYY" min="2017" max="2030" id="date" name="date" required>
+            </div>
+            <div class="mb-3">
+                <label for="period">Period</label>
+                <input value="{{period[2]}}" class="form-control" type="number" placeholder="Period 1 or 2" min="1" max="2" id="period" name="period" required>
+            </div>
+            <button class="btn btn-success" type="submit">Guardar</button>
+        </form>
+    </div>
+{% endblock %}
