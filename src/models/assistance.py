@@ -1,9 +1,10 @@
 from src.config.db import DB
 class assistanceModel():
-    def listAssistance(self, idSession):
+    def listAssistance(self):
         cursor = DB.cursor()
         cursor.execute(""" 
             SELECT 
+            a.id,
             c.date,
             c.cut,
             c.time_start,
@@ -11,13 +12,11 @@ class assistanceModel():
             b.name,
             b.surname,
             b.semester,
-            a.assistance,
-            a.id
+            a.assistance
             FROM session_student a
             INNER JOIN students b ON b.id = a.student_id
             INNER JOIN sessions c ON c.id = a.session_id
-            WHERE a.session_id = ?
-        """,(idSession,))
+        """)
         arrAssistance = cursor.fetchall()
         cursor.close()
         return arrAssistance
@@ -28,28 +27,11 @@ class assistanceModel():
         (data['session'],data['student'],data['assistance'],))
         cursor.close()
 
-    def findAssistance(self, idAssistance):
-        cursor = DB.cursor()
-        cursor.execute(""" 
-            SELECT 
-            b.identification,
-            b.name,
-            b.surname,
-            b.semester,
-            a.assistance
-            FROM session_student a 
-            INNER JOIN students b ON b.id = a.student_id
-            WHERE a.id = ? 
-        """,(idAssistance,))
-        found = cursor.fetchone()
-        cursor.close()
-        return found
-
     def editAssistance(self, data):
         cursor = DB.cursor()
         cursor.execute(""" 
-            UPDATE session_student SET assistance = ? WHERE id = ?
-        """,(data['assistance'],data['id'],))
+            UPDATE session_student SET student_id = ?, session_id = ?, assistance = ? WHERE id = ?
+        """,(data['student'], data['session'], data['assistance'],data['id'],))
         cursor.close()
     
     def removeAssistance(self,assistance):

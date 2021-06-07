@@ -1,53 +1,48 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import request, jsonify
 from src import app
-import src.controllers.period as Global
 from src.models.session import sessionModel
-from src.models.students import studentModel
-from src.models.periods import periodsModel
-from src.models.academicSpaces import academicModel
 SESSIONMODEL = sessionModel()
-STUDENTMODEL = studentModel()
-PERIODMODEL = periodsModel()
-ACADEMICMODEL = academicModel()
 
-@app.route('/Session', methods=['GET','POST'])
+def convert():
+    found = SESSIONMODEL.listSession()
+    arr = []
+    for element in found:
+        arr.append({
+            'id' : element[0],
+            'academic_space_id' : element[1],
+            'date' : element[2],
+            'cut' : element[3],
+            'time_start' : element[4],
+            'time_end' : element[5],
+        })
+    return arr
+
+@app.route('/Sessions', methods=['GET','POST'])
 def indexSession():
     if request.method == 'GET':
-        return render_template('sessions/indexSession.html', academicSpaces= ACADEMICMODEL.listAcademic(Global.session['period']), sessions =  SESSIONMODEL.listSession(Global.session['space']),  pd = int(Global.session['space']))
-    Global.session['space'] = request.form.get('space')
-    return redirect(url_for('indexSession'))    
-
-@app.route('/Create/Session', methods=['GET','POST'])
-def createSession():
-    if request.method == 'GET':
-        return render_template('sessions/createSession.html')
+        return jsonify({'Sessions': convert()})
     data = {
-        'space' : Global.session['space'],
-        'date' : request.form.get('date'),
-        'cut' : request.form.get('cut'),
-        'start' : request.form.get('start'),
-        'end' : request.form.get('end')
+        'space' : request.json['space'],
+        'date' : request.json['date'],
+        'cut' : request.json['cut'],
+        'start' : request.json['time_start'],
+        'end' : request.json['time_end']
     }
     SESSIONMODEL.createSession(data)
-    return redirect(url_for('indexSession'))
+    return jsonify({'Sessions': convert()})
 
-@app.route('/Edit/Session/<idSession>', methods=['GET','POST'])
+@app.route('/Sessions/<idSession>', methods=['PUT','DELETE'])
 def editSession(idSession):
-    if request.method == 'GET':
-        return render_template('sessions/editSession.html', session = SESSIONMODEL.findSession(idSession))
+    if request.method == 'DELETE':
+        SESSIONMODEL.removeSession(idSession)
+        return jsonify({'Sessions': convert()})
     data = {
         'id': idSession,
-        'space' : Global.session['space'],
-        'date' : request.form.get('date'),
-        'cut' : request.form.get('cut'),
-        'start' : request.form.get('start'),
-        'end' : request.form.get('end')
+        'space' : request.json['space'],
+        'date' : request.json['date'],
+        'cut' : request.json['cut'],
+        'start' : request.json['time_start'],
+        'end' : request.json['time_end']
     }
     SESSIONMODEL.editSession(data)
-    return redirect(url_for('indexSession'))
-
-@app.route('/Remove/Session/<idSession>')
-def removeSession(idSession):
-    SESSIONMODEL.removeSession(idSession)
-    return redirect(url_for('indexSession'))
-
+    return jsonify({'Sessions': convert()})

@@ -1,8 +1,8 @@
 from src.config.db import DB
 class studentModel():
-    def listStudents(self, idPeriod):
+    def listStudents(self):
         cursor = DB.cursor()
-        cursor.execute('SELECT * FROM students WHERE period_id = ?',(idPeriod,))
+        cursor.execute('SELECT * FROM students')
         arrStudents = cursor.fetchall()
         cursor.close()
         return arrStudents

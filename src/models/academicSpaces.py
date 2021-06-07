@@ -1,8 +1,8 @@
 from src.config.db import DB
 class academicModel():
-    def listAcademic(self, period):
+    def listAcademic(self):
         cursor = DB.cursor()
-        cursor.execute('SELECT * FROM academic_spaces WHERE period_id = ?',(period,))
+        cursor.execute('SELECT * FROM academic_spaces')
         arrAcademic = cursor.fetchall()
         cursor.close()
         return arrAcademic

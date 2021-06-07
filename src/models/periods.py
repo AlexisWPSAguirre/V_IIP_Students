@@ -23,10 +23,3 @@ class periodsModel():
         cursor = DB.cursor()
         cursor.execute("UPDATE periods SET date = ?, period = ? WHERE id = ?",(data['date'], data['period'], data['id'],))
         cursor.close()
-
-    def findPeriod(self, idPeriod):
-        cursor = DB.cursor()
-        cursor.execute('SELECT * FROM periods WHERE id = ?',(idPeriod,))
-        period = cursor.fetchone()
-        cursor.close()
-        return period

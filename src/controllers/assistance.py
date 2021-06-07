@@ -1,53 +1,48 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import request, jsonify
 from src import app
-import src.controllers.period as Global
-from src.models.notes import notesModel
-from src.models.students import studentModel
-from src.models.periods import periodsModel
 from src.models.assistance import assistanceModel
-NOTESMODEL=notesModel()
-STUDENTMODEL = studentModel()
-PERIODMODEL = periodsModel()
 ASSISTANCEMODEL = assistanceModel()
 
-@app.route('/Assistance/Student/<idSession>')
-def indexAssistance(idSession):
-    Global.session['session'] = idSession
-    return render_template('assistance/indexAssistance.html', students = ASSISTANCEMODEL.listAssistance(idSession) )
+def convert():
+    found = ASSISTANCEMODEL.listAssistance()
+    arr = []
+    for element in found:
+        arr.append({
+            'id' : element[0],
+            'date' : element[1],
+            'cut' : element[2], 
+            'time_start' : element[3],
+            'identification' : element[4],
+            'student' : element[5],
+            'surname' : element[6],
+            'semester' : element[7],
+            'assistance': element[8]
+        })
+    return arr
 
-@app.route('/Create/Assistance/Student/<idStudent>', methods=['GET','POST'])
-def createAssistance(idStudent=None):
+
+@app.route('/Assistances', methods=['GET', 'POST'])
+def indexAssistance():
     if request.method == 'GET':
-        return render_template('assistance/createAssistance.html', selected = STUDENTMODEL.findStudent(idStudent))
-    
+        return jsonify({'Assistance': convert()})
     data = {
-        'student': idStudent,
-        'session':Global.session['session'],
-        'assistance' : request.form.get('assistance')
+        'student': request.json['student_id'],
+        'session': request.json['session_id'],
+        'assistance' : request.json['assistance']
     }
     ASSISTANCEMODEL.createAssistance(data)
-    return redirect(url_for('indexAssistance', idSession = Global.session['session']))
+    return jsonify({'Assistance': convert()})
 
-@app.route('/Select/Student/Assistance', methods=['GET','POST'])
-def selectStudentAssistance():
-    if request.method == 'GET':
-        return render_template('assistance/selectStudentAssistance.html', periods = PERIODMODEL.listPeriods(), students=STUDENTMODEL.listStudents(Global.session['period']), pd = int(Global.session['period']))
-    Global.session['period'] = request.form.get('period')
-    return redirect(url_for('selectStudentAssistance'))
-
-@app.route('/Edit/Assistance/<assistance>', methods=['GET','POST'])
+@app.route('/Assistances/<assistance>', methods=['PUT','DELETE'])
 def editAssistance(assistance):
-    if request.method == 'GET':
-        return render_template('assistance/editAssistance.html', assistance = ASSISTANCEMODEL.findAssistance(assistance))
-    
+    if request.method == 'DELETE':
+        ASSISTANCEMODEL.removeAssistance(assistance)
+        return jsonify({'Assistance': convert()})
     data = {
         'id': assistance,
-        'assistance' : request.form.get('assistance')
+        'student': request.json['student_id'],
+        'session': request.json['session_id'],
+        'assistance' : request.json['assistance']
     }
     ASSISTANCEMODEL.editAssistance(data)
-    return redirect(url_for('indexAssistance', idSession = Global.session['session']))
-
-@app.route('/Remove/Assistance/<assistance>')
-def removeAssistance(assistance):
-    ASSISTANCEMODEL.removeAssistance(assistance)
-    return redirect(url_for('indexAssistance', idSession = Global.session['session']))
+    return jsonify({'Assistance': convert()})

@@ -1,8 +1,8 @@
 from src.config.db import DB
 class activitiesModel():
-    def listActivities(self, idSpace):
+    def listActivities(self):
             cursor = DB.cursor()
-            cursor.execute('SELECT * FROM partials_activities WHERE academic_space_id = ?',(idSpace,))
+            cursor.execute('SELECT * FROM partials_activities')
             arrActivities = cursor.fetchall()
             cursor.close()
             return arrActivities

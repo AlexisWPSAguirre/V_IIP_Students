@@ -1,54 +1,48 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import request, jsonify
 from src import app
-import src.controllers.period as Global
 from src.models.activitiesParcials import activitiesModel
-from src.models.periods import periodsModel
-from src.models.academicSpaces import academicModel
-ACTIVITIESMODEL = activitiesModel()
-ACADEMICMODEL = academicModel()
-PERIODMODEL = periodsModel()
+ACTIVITIESMODEL = activitiesModel() 
 
-@app.route('/Activities/Parcials', methods=['GET','POST'])
-@app.route('/Activities/Parcials/<space>', methods=['GET','POST'])
-def indexActivities(space=None):
-    if request.method == 'GET':
-        if space != None:
-            Global.session['space'] = space
-        return render_template('activities_parcials/indexActivities.html', periods = PERIODMODEL.listPeriods(), 
-        academicSpaces= ACADEMICMODEL.listAcademic(Global.session['period']), activities = ACTIVITIESMODEL.listActivities(Global.session['space']), pd = int(Global.session['space']))
-    Global.session['space'] = request.form.get('space')
-    return redirect(url_for('indexActivities'))
+def convert():
+    found = ACTIVITIESMODEL.listActivities()
+    arr = []
+    for element in found:
+        arr.append({
+            'id' : element[0],
+            'space_id' : element[1],
+            'date' : element[2],
+            'cut' : element[3],
+            'name' : element[4],
+            'porcentage_in_cut' : element[5],
+        })
+    return arr
 
-@app.route('/Create/Activities/Partials', methods=['GET','POST'])
-def createActivitiesPartials():
+@app.route('/Activities-Partials', methods=['GET','POST'])
+def indexActivities():
     if request.method == 'GET':
-        return render_template('activities_parcials/createActivities.html')
+        return jsonify({'Activities-Partials': convert()})
     data = {
-        'name': request.form.get('name'),
-        'date': request.form.get('date'),
-        'cut': request.form.get('cut'),
-        'porcentage': request.form.get('porcentage'),
-        'academic_space' : Global.session['space']
+        'name': request.json['name'],
+        'date': request.json['date'],
+        'cut': request.json['cut'],
+        'porcentage': request.json['porcentage'],
+        'academic_space' : request.json['space_id'],
     }
     ACTIVITIESMODEL.createActivity(data)
-    return redirect(url_for('indexActivities'))
+    return jsonify({'Activities-Partials': convert()})
 
-@app.route('/Edit/Activities/Partials/<idActivity>', methods=['GET','POST'])
+@app.route('/Activities-Partials/<idActivity>', methods=['PUT','DELETE'])
 def editActivitiesPartials(idActivity):
-    if request.method == 'GET':
-        return render_template('activities_parcials/editActivities.html', activity = ACTIVITIESMODEL.findActivity(idActivity))
+    if request.method == 'DELETE':
+        ACTIVITIESMODEL.removeActivity(idActivity)
+        return jsonify({'Activities-Partials': convert()})
     data = {
         'id': idActivity,
-        'name': request.form.get('name'),
-        'date': request.form.get('date'),
-        'cut': request.form.get('cut'),
-        'porcentage': request.form.get('porcentage'),
-        'academic_space' : Global.session['space']
+        'name': request.json['name'],
+        'date': request.json['date'],
+        'cut': request.json['cut'],
+        'porcentage': request.json['porcentage'],
+        'academic_space' : request.json['space_id'],
     }
     ACTIVITIESMODEL.editActivity(data)
-    return redirect(url_for('indexActivities'))
-
-@app.route('/Remove/Activities/Partials/<idActivity>')
-def removeActivity(idActivity):
-    ACTIVITIESMODEL.removeActivity(idActivity)
-    return redirect(url_for('indexActivities'))
+    return jsonify({'Activities-Partials': convert()})

@@ -1,56 +1,56 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import request, jsonify
 from src import app
-import src.controllers.period as Global
 from src.models.students import studentModel
-from src.models.periods import periodsModel
 STUDENTMODEL = studentModel()
-PERIODMODEL = periodsModel()
+
+def convert():
+    found = STUDENTMODEL.listStudents()
+    arr = []
+    for element in found:
+        arr.append({
+            'id' : element[0],
+            'identification' : element[1],
+            'name' : element[2],
+            'surname' : element[3],
+            'phone_number' : element[4],
+            'email' : element[5],
+            'semester' : element[6],
+            'period_id' : element[7]
+        })
+    return arr
+
 @app.route('/Students', methods=['GET','POST'])
 def indexStudents():
     if request.method == 'GET':
-        if not 'period' in Global.session:
-            Global.session['period'] = 1
-        return render_template('students/indexStudents.html', periods = PERIODMODEL.listPeriods(), students=STUDENTMODEL.listStudents(Global.session['period']), pd = int(Global.session['period']))
-    Global.session['period'] = request.form.get('period')
-    return redirect(url_for('indexStudents'))
-
-@app.route('/Create/Student', methods=['GET','POST'])
-def createStudent():
-    if request.method == 'GET':
-        return render_template('students/createStudent.html')
+        return jsonify({'Students': convert()})
     data = {
-        'identification' : request.form.get('identification'),
-        'name' : request.form.get('name'),
-        'surname' : request.form.get('surname'),
-        'phone_number' : request.form.get('phone_number'),
-        'email' : request.form.get('email'),
-        'semester' : request.form.get('semester'),
-        'period_id' : Global.session['period']
+        'identification' : request.json['identification'],
+        'name' : request.json['name'],
+        'surname' : request.json['surname'],
+        'phone_number' : request.json['phone_number'],
+        'email' : request.json['email'],
+        'semester' : request.json['semester'],
+        'period_id' : request.json['period_id']
     }
     STUDENTMODEL.createStudent(data)
-    return redirect(url_for('indexStudents'))
+    return jsonify({'Students': convert()})
 
-@app.route('/Edit/Student/<idStudent>', methods=['GET','POST'])
+@app.route('/Students/<idStudent>', methods=['PUT','DELETE'])
 def editStudent(idStudent):
-    if request.method == 'GET': 
-        return render_template('students/EditStudent.html', student = STUDENTMODEL.findStudent(idStudent), periods = PERIODMODEL.listPeriods())
+    if request.method == 'DELETE': 
+        STUDENTMODEL.removeStudent(idStudent)
+        return jsonify({'Students': convert()})
     data = {
-        'identification' : request.form.get('identification'),
-        'name' : request.form.get('name'),
-        'surname' : request.form.get('surname'),
-        'phone_number' : request.form.get('phone_number'),
-        'email' : request.form.get('email'),
-        'semester' : request.form.get('semester'),
-        'period_id' : Global.session['period'],
+        'identification' : request.json['identification'],
+        'name' : request.json['name'],
+        'surname' : request.json['surname'],
+        'phone_number' : request.json['phone_number'],
+        'email' : request.json['email'],
+        'semester' : request.json['semester'],
+        'period_id' :request.json['period_id'],
         'id': idStudent
     }
     STUDENTMODEL.editStudent(data)
-    return redirect(url_for('indexStudents'))
-
-@app.route('/Remove/Student/<idStudent>')
-def removeStudent(idStudent):
-    STUDENTMODEL.removeStudent(idStudent)
-    return redirect(url_for('indexStudents'))
-
+    return jsonify({'Students': convert()})
 
 

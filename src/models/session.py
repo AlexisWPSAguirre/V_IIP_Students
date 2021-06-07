@@ -1,11 +1,9 @@
 from src.config.db import DB
 class sessionModel():
-    def listSession(self, idSpace):
+    def listSession(self):
         cursor = DB.cursor()
         cursor.execute(""" 
-            SELECT * FROM sessions
-            WHERE academic_space_id = ?
-        """,(idSpace,))
+            SELECT * FROM sessions""")
         arrSessions = cursor.fetchall()
         cursor.close()
         return arrSessions

@@ -1,45 +1,44 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import request, jsonify
 from src import app
-import src.controllers.period as Global
 from src.models.academicSpaces import academicModel
-from src.models.periods import periodsModel
 ACADEMICMODEL = academicModel()
-PERIODMODEL = periodsModel()
-@app.route('/Academic/Space', methods=['GET','POST'])
+
+
+def convert():
+    found = ACADEMICMODEL.listAcademic()
+    arr = []
+    for element in found:
+        arr.append({
+            'id' : element[0],
+            'period_id' : element[1],
+            'name' : element[2],
+            'semester' : element[3]
+        })
+    return arr
+
+@app.route('/AcademicSpaces', methods=['GET','POST'])
 def indexAcademicSpace():
     if request.method == 'GET':
-        if not 'period' in Global.session:
-            Global.session['period'] = 1
-        return render_template('academicSpaces/indexAcademicSpaces.html', periods = PERIODMODEL.listPeriods(), academicSpaces= ACADEMICMODEL.listAcademic(Global.session['period']), pd = int(Global.session['period']) )
-    Global.session['period'] = request.form.get('period')
-    return redirect(url_for('indexAcademicSpace'))
-
-@app.route('/Create/Academic/Space', methods=['GET','POST'])
-def createAcademicSpace():
-    if request.method == 'GET':
-        return render_template('academicSpaces/createAcademicSpace.html')
+        return jsonify({'Academic Spaces': convert()})
     data = {
-        'name' : request.form.get('name'),
-        'semester' : request.form.get('semester'),
-        'period_id': Global.session['period']
+        'name' : request.json['name'],
+        'semester' : request.json['semester'],
+        'period_id': request.json['period_id']
     }
     ACADEMICMODEL.createAcademicSpace(data)
-    return redirect(url_for('indexAcademicSpace'))
+    return jsonify({'Academic Spaces': convert()})
 
-@app.route('/Edit/Academic/Space/<idSpace>', methods=['GET','POST'])
+
+@app.route('/AcademicSpaces/<idSpace>', methods=['PUT','DELETE'])
 def editAcademicSpace(idSpace):
-    if request.method == 'GET':
-        return render_template('academicSpaces/editAcademicSpace.html', space = ACADEMICMODEL.findAcademicSpace(idSpace))
+    if request.method == 'DELETE':
+        ACADEMICMODEL.removeAcademicSpace(idSpace)
+        return jsonify({'Academic Spaces': convert()})
     data = {
         'id' : idSpace,
-        'name' : request.form.get('name'),
-        'semester' : request.form.get('semester'),
-        'period_id': Global.session['period']
+        'name' : request.json['name'],
+        'semester' : request.json['semester'],
+        'period_id': request.json['period_id']
     }
     ACADEMICMODEL.editAcademicSpace(data)
-    return redirect(url_for('indexAcademicSpace'))
-
-@app.route('/Remove/Academic/Space/<idSpace>')
-def removeAcademicSpace(idSpace):
-    ACADEMICMODEL.removeAcademicSpace(idSpace)
-    return redirect(url_for('indexAcademicSpace'))
+    return jsonify({'Academic Spaces': convert()})
